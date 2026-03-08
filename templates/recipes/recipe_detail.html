@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ recipe.title }} - Recipe Vault{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <div class="detail-header">
+        {% if recipe.image %}
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="detail-image">
+        {% else %}
+            <div class="detail-no-image">🍽️</div>
+        {% endif %}
+
+        <div class="detail-info">
+            <h1>{{ recipe.title }}</h1>
+            <p class="detail-description">{{ recipe.description }}</p>
+
+            <div class="detail-meta">
+                <span class="badge badge-difficulty">{{ recipe.get_difficulty_display }}</span>
+                <span class="badge badge-category">{{ recipe.get_category_display }}</span>
+                <span class="badge badge-time">⏱ {{ recipe.cooking_time }} min</span>
+                <span class="badge badge-time">🍽 {{ recipe.servings }} servings</span>
+            </div>
+
+            <div class="detail-actions">
+                <a href="{% url 'recipe_update' recipe.pk %}" class="btn btn-primary">✏️ Edit</a>
+                <a href="{% url 'recipe_delete' recipe.pk %}" class="btn btn-danger">🗑️ Delete</a>
+                <a href="{% url 'recipe_list' %}" class="btn btn-secondary">← Back to List</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-body">
+        <div class="detail-section">
+            <h2>🧂 Ingredients</h2>
+            <ul class="ingredients-list">
+                {% for line in recipe.ingredients.splitlines %}
+                    {% if line.strip %}
+                        <li>{{ line }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="detail-section">
+            <h2>📝 Instructions</h2>
+            <div class="instructions-text">
+                {{ recipe.instructions|linebreaks }}
+            </div>
+        </div>
+    </div>
+
+    <p class="detail-timestamp">
+        Added on {{ recipe.created_at|date:"F j, Y" }}
+        {% if recipe.updated_at != recipe.created_at %}
+            &middot; Last updated {{ recipe.updated_at|date:"F j, Y" }}
+        {% endif %}
+    </p>
+</div>
+{% endblock %}
